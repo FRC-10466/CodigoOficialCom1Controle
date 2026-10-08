@@ -1,11 +1,13 @@
 package frc.robot;
-
+//Imports WPLIP
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+//Imports bagunçados
 import frc.robot.subsystems.Traction;
 import frc.robot.subsystems.Angulador;
 import frc.robot.subsystems.IntakeFloor;
@@ -64,7 +66,7 @@ public class RobotContainer {
 
     /* ===== CONTROLES ===== */
     private final XboxController xbox1 = new XboxController(0);
-    private final XboxController xbox2 = new XboxController(1);
+    // private final XboxController xbox2 = new XboxController(1);
 
     /* ===== BOTOES ===== */
     private final JoystickButton btnTurbo =
@@ -72,43 +74,41 @@ public class RobotContainer {
 
     // LIMELIGHT
     private final JoystickButton rb =
-        new JoystickButton(xbox2, XboxController.Button.kRightBumper.value);
+        new JoystickButton(xbox1, XboxController.Button.kRightBumper.value);
 
     private final JoystickButton lb =
-        new JoystickButton(xbox2, XboxController.Button.kLeftBumper.value);
+        new JoystickButton(xbox1, XboxController.Button.kLeftBumper.value);
 
     private final Trigger rt =
-    new Trigger(() -> xbox2.getRightTriggerAxis() > 0.2);
+    new Trigger(() -> xbox1.getRightTriggerAxis() > 0.2);
 
     private final Trigger lt =
-        new Trigger(() -> xbox2.getLeftTriggerAxis() > 0.2);
+        new Trigger(() -> xbox1.getLeftTriggerAxis() > 0.2);
 
     // SHOOTER
     private final JoystickButton btnA =
-        new JoystickButton(xbox2, XboxController.Button.kA.value);
+        new JoystickButton(xbox1, XboxController.Button.kA.value);
 
 
     private final JoystickButton btnX =
-        new JoystickButton(xbox2, XboxController.Button.kX.value);
+        new JoystickButton(xbox1, XboxController.Button.kX.value);
 
     private final JoystickButton btnB =
-        new JoystickButton(xbox2, XboxController.Button.kB.value);
+        new JoystickButton(xbox1, XboxController.Button.kB.value);
 
     private final JoystickButton btnY =
-        new JoystickButton(xbox2, XboxController.Button.kY.value);
+        new JoystickButton(xbox1, XboxController.Button.kY.value);
     private final JoystickButton btnRb = new JoystickButton(xbox1, 6);
     private final JoystickButton btnLb = new JoystickButton(xbox1, 5);
     
 
-    private final JoystickButton btnJ = new JoystickButton(xbox2, 9);
+    private final JoystickButton btnJ = new JoystickButton(xbox1, 9);
 
     public RobotContainer() {
         configureBindings();
         configureAutonomous();
 
-        traction.setDefaultCommand(
-            new Controller(traction, xbox1)
-        );
+        traction.setDefaultCommand(new Controller(traction, xbox1));
     }
 
     private void configureBindings() {
@@ -121,70 +121,42 @@ public class RobotContainer {
         );*/
         btnRb.whileTrue(new AjusteAnguloShooterTraction(limelight, traction, shooter, angulador));
 
-        btnLb.whileTrue(
-            new AutoAimShooter( angulador, shooter, limelight)
+        btnLb.whileTrue(new AutoAimShooter( angulador, shooter, limelight) );
+
+        btnY.toggleOnTrue(new MoverAnguladoPreset(angulador,AnguloPreset.ALTO));
+        btnX.onTrue(new MoverAnguladoPreset(angulador, AnguloPreset.CENTRAL));
+        btnY.toggleOnFalse(new MoverAnguladoPreset(angulador,AnguloPreset.BAIXO));
+
+        btnX.onTrue(new ShooterVelocidade(shooter,ConstantesShooter.Velocidade.MEDIA )
+);
+
+        btnB.whileTrue(
+            new ShooterVelocidade( shooter,ConstantesShooter.Velocidade.ALTA)
         );
 
-        btnA.onTrue(new ShooterAutoPorDistancia(shooter, limelight));
- 
-         btnX.onTrue(
-    new ShooterVelocidade(
-        shooter,
-        ConstantesShooter.Velocidade.MEDIA
-    )
-);
-
-btnB.whileTrue(
-    new ShooterVelocidade(
-        shooter,
-        ConstantesShooter.Velocidade.ALTA
-    )
-);
-
-btnJ.whileTrue(
-    new AutoAimShooter(angulador, shooter, limelight)
-);
+btnJ.whileTrue(new AutoAimShooter(angulador, shooter, limelight));
 
         rt.onTrue(new ToggleSequencialShooterIndex(shooter, index));
 
-        lt.onTrue(
-            new PararSequencialIndexShooter(shooter, index));
+        lt.onTrue( new PararSequencialIndexShooter(shooter, index));
 
         rb.onTrue(new ToggleIntakeReverse(intakeFloor) );
         lb.onTrue(new ToggleIntake(intakeFloor));
 
-    new POVButton(xbox2, 180)
+    new POVButton(xbox1, 180)
         .whileTrue(new MoverPivotPreset(
             intakeFloor,
             AngulosPresetPivot.ALTO
         ));
-    new POVButton(xbox2, 0)
+    new POVButton(xbox1, 0)
         .whileTrue(new MoverPivotPreset(
             intakeFloor,
             AngulosPresetPivot.BAIXO
         ));
-    new POVButton(xbox2, 270)
+    new POVButton(xbox1, 270)
         .whileTrue(new MoverPivotPreset(
             intakeFloor,
             AngulosPresetPivot.MEDIO
-        ));
-
-    new POVButton(xbox1, 0)
-        .onTrue(new MoverAnguladoPreset(
-            angulador,
-            AnguloPreset.ALTO
-        ));
-
-    new POVButton(xbox1, 270)
-        .onTrue(new MoverAnguladoPreset(
-            angulador,
-            AnguloPreset.CENTRAL
-        ));
-
-    new POVButton(xbox1, 180)
-        .onTrue(new MoverAnguladoPreset(
-            angulador,
-            AnguloPreset.BAIXO
         ));
     }
 
@@ -265,6 +237,3 @@ btnJ.whileTrue(
         new GiroPorAngulo(traction, -25)
        );
     } */
-
-
-

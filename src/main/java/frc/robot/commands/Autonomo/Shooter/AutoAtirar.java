@@ -2,6 +2,7 @@ package frc.robot.commands.Autonomo.Shooter;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import frc.robot.Constantes.ConstantesShooter;
 import frc.robot.commands.Shooter.AtivarFrenteShooter;
 import frc.robot.commands.Shooter.PararShooter;
